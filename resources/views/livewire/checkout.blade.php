@@ -1,4 +1,4 @@
-<div class="bg-tertiary-900">
+<div class="bg-tertiary-900" x-data="checkout()">
     <div class="fixed left-0 top-0 hidden lg:block h-full w-1/2 bg-tertiary-900"></div>
     <div class="fixed right-0 top-0 hidden lg:block h-full w-1/2 bg-tertiary-800"></div>
 
@@ -28,42 +28,40 @@
         </section>
 
         <section aria-labelledby="payment-and-shipping-heading" class="py-16 lg:col-start-1 lg:row-start-1 lg:mx-auto lg:w-full lg:max-w-lg">
-            <form>
+            <div>
                 <div class="mx-auto max-w-2xl px-4 lg:max-w-none lg:px-0">
-                    <div>
-                        <x-section-title title="Dados de Contato" />
-                        <div class="mt-6">
-                            <x-input-label for="email-address" value="Email Address" />
-                            <div class="mt-1">
-                                <x-text-input type="email" name="email" id="email-address" autocomplete="email" placeholder="Digite seu email" />
-                            </div>
-                        </div>
-                        <div class="mt-10">
-                            <x-section-title title="Detalhes do Pagamento" />
-                            <div class="mt-6 grid grid-cols-3 gap-x-4 gap-y-6 sm:grid-cols-4">
-                                <div class="col-span-3 sm:col-span-4">
-                                    <x-input-label for="card-number" value="Número do Cartão" />
-                                    <div class="mt-1">
-                                        <x-text-input type="text" id="card-number" name="card-number" placeholder="Número do Cartão" />
-                                    </div>
-                                </div>
-                                <div class="col-span-2 sm:col-span-3">
-                                    <x-input-label for="expiration-date" value="Data de Expiração" />
-                                    <div class="mt-1">
-                                        <x-text-input type="text" id="expiration-date" name="expiration-date" placeholder="MM/AA" />
-                                    </div>
-                                </div>
-                                <div>
-                                    <x-input-label for="cvc" value="cvc" />
-                                    <div class="mt-1">
-                                        <x-text-input type="text" id="cvc" name="cvc" placeholder="CVC" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    
+                    <nav class="flex mb-4" aria-label="Breadcrumb">
+                        <ol class="text-xs inline-flex items-center space-x-1 md:space-x-3">
+                            <li @class(['font-bold' => $step === CheckoutStepsEnum::INFORMATION->value])>
+                                <span class="text-white font-bold">{{ CheckoutStepsEnum::INFORMATION->getName() }}</span>
+                            </li>
+                            <li @class(['inline-flex items-center', 'font-bold' => $step === CheckoutStepsEnum::SHIPPING->value])>
+                                <svg class="w-3 h-3 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+                                </svg>
+                                <span class="text-white font-bold">{{ CheckoutStepsEnum::SHIPPING->getName() }}</span>
+                            </li>
+                            <li @class(['inline-flex items-center', 'font-bold' => $step === CheckoutStepsEnum::PAYMENT->value])>
+
+                                <svg class="w-3 h-3 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+                                </svg>
+                                <span class="text-white font-bold">{{ CheckoutStepsEnum::PAYMENT->getName() }}</span>
+                            </li>
+                        </ol>
+                    </nav>
+
                 </div>
-            </form>
+
+                @if ($step === CheckoutStepsEnum::INFORMATION->value)
+                    <x-checkout.information-form />
+                @elseif ($step === CheckoutStepsEnum::SHIPPING->value)
+                    <x-checkout.shipping-form :user="$user" :address="$address" />
+                @elseif ($step === CheckoutStepsEnum::PAYMENT->value)
+                    <x-checkout.payment-form :user="$user" :address="$address" />
+                @endif
+            </div>
         </section>
     </div>
 </div>
